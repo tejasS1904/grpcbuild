@@ -8,23 +8,19 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Clone vcpkg
+      - name: Show vcpkg location
         shell: pwsh
         run: |
-          git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
-
-      - name: Bootstrap vcpkg
-        shell: pwsh
-        run: |
-          C:\vcpkg\bootstrap-vcpkg.bat
+          Write-Host "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT"
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" version
 
       - name: Build gRPC
         shell: pwsh
         run: |
-          C:\vcpkg\vcpkg.exe install grpc:x64-windows
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install grpc:x64-windows
 
       - name: Upload compiled package
         uses: actions/upload-artifact@v4
         with:
           name: grpc-x64-windows
-          path: C:\vcpkg\installed\x64-windows
+          path: ${{ env.VCPKG_INSTALLATION_ROOT }}\installed\x64-windows
