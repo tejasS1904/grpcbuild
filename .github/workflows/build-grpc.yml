@@ -1,0 +1,30 @@
+name: Build gRPC with vcpkg
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone vcpkg
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
+
+      - name: Bootstrap vcpkg
+        shell: pwsh
+        run: |
+          C:\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Build gRPC
+        shell: pwsh
+        run: |
+          C:\vcpkg\vcpkg.exe install grpc:x64-windows
+
+      - name: Upload compiled package
+        uses: actions/upload-artifact@v4
+        with:
+          name: grpc-x64-windows
+          path: C:\vcpkg\installed\x64-windows
